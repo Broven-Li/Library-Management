@@ -9,9 +9,8 @@
 */
 struct book
 {
-	char num[20],nam[20],aut[20],pub[20],cat[20];
+	char num[20],nam[20],aut[20],pub[20];
 	int  many;
-	float price;
 	struct book*next;
 };
 
