@@ -7,7 +7,7 @@
   However, you may not change the function prototypes. 
   You are also free to add additional head files and data structures as needed. 
 */
-struct book//图书信息
+struct book
 {
 	char num[20],nam[20],aut[20],pub[20],cat[20];
 	int  many;
@@ -15,19 +15,42 @@ struct book//图书信息
 	struct book*next;
 };
 
-struct reader//读者借阅信息
+struct reader
 {
 	int jnum;
 	char jnam[20],time[20],tsnam[20];
 	struct reader *next;
 };
-struct land//登录信息
+
+struct land
 {
 	int zhanghao;
 	char password[20];
 	struct land*next;
 };
 
+int book_amount();
+void show_main_menu();
+void borrow_menu();
+
+void administrator ();
+void student ();
+void show_administrator ();
+void show_student ();
+
+void main_menu();
+void search_book();
+void add_book();
+void delete_book();
+
+void borrow_book();
+void return_book();
+void inquire_borrowed_books();
+
+void stu_land();
+void admin_land();
+void creat_new_account();
+void load_main();
 /*typedef struct _Book {
 	    unsigned int id; //Book ID
 		char title[100]; //book title
@@ -54,7 +77,6 @@ typedef struct man_table{
 	struct man_table* next;
 }table_admin,*admin;*/
 //增加图书
-void add_book()
 /*
 typedef struct _BookArray {
 	 Book* array; // pointer to array (or linked list) of struct Book.
