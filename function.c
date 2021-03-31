@@ -44,7 +44,6 @@ void show_main_menu()
     printf(" Please enter and press ENTER to confirm.\n");
     printf("*************************************************\n");
 
-    return;
 }
 
 void show_administrator ()
@@ -77,7 +76,7 @@ void administrator ()
     scanf(" %c", &choose);
     for(;;)
 	{
-		switch(choose)
+        switch(choose)
         {
             case '1':
                 add_book();
@@ -86,7 +85,7 @@ void administrator ()
                 delete_book();
                 break;
             case '3':
-                main_menu();
+                load_main();
                 break;
         }
 	}
@@ -115,37 +114,9 @@ void student ()
                 break;
 	        case'5':
   	            system ("cls");
-				main_menu();
+				load_main();
 	            break;
         }
-    }
-}
-
-void main_menu()
-{
-	char choose;
-	show_main_menu();
-	scanf("%c",&choose);
-	switch(choose)
-    {
-	    case'1':
-	        administrator();
-	        break;
-
-	    case'2':
-	        student();
-	  	    break;
-
-        case'3':
-            creat_new_account();
-            break;
-
-	    case'4':
-	  	    system("cls");
-            getch();
-  	        exit(0);
-  	        system ("cls");
-	        break;
     }
 }
 
@@ -158,7 +129,12 @@ void add_book()
     system ("cls");
 
 	fp=fopen("library.txt","a");
-	
+
+	if (!fp)
+    {
+	    fp=fopen("library.txt","w");
+    }
+
 	printf("Please enter the book information in the following format: \nBook_ID  Name  Author  Publication_Year  Quantity");
 	
 	for(;i!=27;)//Press ESC to exit
@@ -201,9 +177,9 @@ void delete_book()
     if (i==27)
 	{
 		administrator();
-	 	fp=fopen("library.txt","r");
-	 	j=book_amount();
 	}
+	fp=fopen("library.txt","r");
+	j=book_amount();
 	for (k=0;k<j;k++)
     {
 		fscanf(fp, "%s%s%s%s%d", book_number, book_name, book_author, publish_time, &copies);
@@ -244,7 +220,7 @@ void delete_book()
    	p=head;
    	for (;p!=NULL;)
 	{
-   		fprintf(fp,"%-8s%-9s%-14s%-16s%-18s%-7d%-8.2f\n",p->num,p->nam,p->aut,p->pub,p->many);
+   		fprintf(fp,"%-8s%-9s%-14s%-16s%-7d\n",p->num,p->nam,p->aut,p->pub,p->many);
    		p=p->next;
 	}
    	fclose(fp);
@@ -309,7 +285,6 @@ void borrow_book()
 	int many=0;
 	char book_name[20]={'\0'},book_author[20]={'\0'},publish_year[20]={'\0'},book_id[20]={'\0'},
          stu_name[20]={'\0'},date[20]={'\0'},borrow_book_name[20]={'\0'};
-	char hit=0;
 	system("cls");
 	fp=fopen("library.txt","r");
     printf("\nPlease enter book name:\n");
@@ -439,10 +414,10 @@ void return_book ()
 							p2=p1;
 							p1=(struct reader*)malloc(LEN_READER);
           				}
-		  				p1->jnum=stu_account;
-		  				strcpy(p1->jnam, stu_name);
+		  				p1->stu_account=stu_account;
+		  				strcpy(p1->stu_name, stu_name);
 		 				strcpy(p1->time, borrow_time);
-		  				strcpy(p1->tsnam,tzname);
+		  				strcpy(p1->book_name, tzname);
 		  			}
 			}
 		  	if (n==0)
@@ -459,14 +434,12 @@ void return_book ()
 		  	p=head;
 		  	for (;p!=NULL;)
 		  	{
-		      	fprintf(fp,"\n%-8d%-23s%-18s%-10s\n",p->jnum,p->jnam,p->time,p->tsnam);
+		      	fprintf(fp, "\n%-8d%-23s%-18s%-10s\n", p->stu_account, p->stu_name, p->time, p->book_name);
 			  	p=p->next;
 	      	}
 		  	free(p);
 		  	fclose(fp);
 		}
-	
-	
 
 	if(flag)
 	{
@@ -482,7 +455,7 @@ void return_book ()
 			k=book_amount();
 			for (i=0;i<k;i++)
 			{
-				fscanf(fp3, "%s%s%s%s%s%d%f", book_id, book_name, book_author, publish_year, &txcl);
+				fscanf(fp3, "%s%s%s%s%d", book_id, book_name, book_author, publish_year, &txcl);
 				n++;
 				if (n==1)
 				{
@@ -511,20 +484,19 @@ void return_book ()
 				lp1->next=NULL;
 				fclose(fp3);	   
 			}
-				   zp1=lhead1;
-				   for (;zp1!=NULL;)
-				   {
-				        if(!(strcmp(zp1->nam, input_stu_name)))
-						++(zp1->many);
+			zp1=lhead1;
+			for (;zp1!=NULL;)
+			    {
+			        if(!(strcmp(zp1->nam, input_stu_name)))
+			            ++(zp1->many);
 						zp1=zp1->next;
 					}
-					fp3=fopen("library.txt","w");
 					fclose(fp);
 					fp3=fopen("library.txt","a");
 					zp1=lhead1;
 					for (;zp1!=NULL;)
 					{
-                         fprintf(fp3,"%-8s%-9s%-14s%-16s%-18s%-7d%-8.2f\n",
+                         fprintf(fp3,"%-8s%-9s%-14s%-16s%-7d\n",
         				 zp1->num,zp1->nam,zp1->aut,zp1->pub,zp1->many);
 						 zp1=zp1->next;
 				    }
@@ -533,7 +505,7 @@ void return_book ()
 					student();
 					}
 					else
-					printf("Not exist! Press any key to return!");
+					printf("Successfully returned!");
 					getch();
 					student();
 
@@ -547,7 +519,7 @@ void inquire_borrowed_books()
     char find[20]={'\0'};
     fp=fopen("reader.txt","r");
 	system("cls");
-    printf("Please enter your name：\n");
+    printf("Please enter your name:\n");
     scanf("%s", find);
     system ("cls");
 	m=book_amount();
@@ -557,12 +529,12 @@ void inquire_borrowed_books()
         if(!strcmp(find, borrow_name))
         {
         	if(k==0)
-            {
-				printf("Inquired result:\n\n");
-			  	printf("\nAccount\tUser name\t\tBorrow time \tBooks\n");
-				printf("\n%-8d%-23s%-18s%-10s\n", borrow_num, borrow_name, borrow_time, book_name);
+        	{
+                printf("Inquired result:\n");
+                printf("\nAccount\tUser name\tBorrow time\tBooks\n");
+            }
+				printf("\n%-8d%-17s%-16s%-10s\n", borrow_num, borrow_name, borrow_time, book_name);
             	k++;
-			}
         }
     }
     
@@ -596,7 +568,6 @@ void load_main()
 	  	    break;
 	    case'4':
 	  	    system("cls");
-            getch();
   	        exit(0);
   	        system ("cls");
 	        break;
@@ -610,13 +581,12 @@ void creat_new_account()
 	char password[20],password1[20];
 	char name[20];
 	char hit=0;
-	if ((fp=fopen("land.txt","r"))==NULL)
-	{
-    	fp=fopen("land.txt","w");
-    	fclose(fp);
-    }
     system("cls");
 	fp=fopen("land.txt","a");
+	if (!fp)
+    {
+	    fp=fopen("land.txt","w");
+    }
 	for(;;)//confirm the two password are the same
 	{
 		printf("Please enter the account as the following format: Username, Account, Password\n");
@@ -654,6 +624,11 @@ int match(int m,char a[20])
 	char password[20];
 
 	fp=fopen("land.txt","r");
+
+	if(!fp)
+    {
+	    fp=fopen("land.txt","w");
+    }
 
     for(; !feof(fp); )
     {

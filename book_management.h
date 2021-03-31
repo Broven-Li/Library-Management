@@ -16,8 +16,8 @@ struct book
 
 struct reader
 {
-	int jnum;
-	char jnam[20],time[20],tsnam[20];
+	int stu_account;
+	char stu_name[20],time[20],book_name[20];
 	struct reader *next;
 };
 
@@ -37,7 +37,6 @@ void student ();
 void show_administrator ();
 void show_student ();
 
-void main_menu();
 void search_book();
 void add_book();
 void delete_book();
